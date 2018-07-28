@@ -1,0 +1,27 @@
+:global server ()
+:global port ()
+:global user ()
+:global password ()
+:global starttls ()
+:global to ()
+:global cc ()
+:global from ()
+:global subject ([/system identity get name] . " configuration backup")
+:global body ([/system identity get name] . " configuration backup")
+
+:global backupfile ([/system identity get name] . ".backup") 
+:global rscfile ([/system identity get name] . ".rsc") 
+
+/system backup save name=$backupfile
+/export file=$rscfile
+
+:delay 5s
+
+/tool e-mail send server=$server port=$port user=$user password=$password start-tls=$starttls to=$to cc=$cc from=$from subject=$subject body=$body file="$backupfile,$rscfile"
+
+:delay 5s
+
+/file remove $backupfile 
+/file remove $rscfile
+
+:log info "system configuration sent by e-mail"
